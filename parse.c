@@ -534,14 +534,6 @@ char *get_alternative_message(FILE *fd, const char *boundary, const char *cte)
 		else
 			this_cte = cte;
 		tmp = get_message(fd, headers[0].body, boundary, this_cte);
-		if (!tmp) {
-			stop = errno;
-			for (c = 0; c < 3; c++)
-				free(headers[c].body);
-			free(buf);
-			errno = stop;
-			return NULL;
-		}
 		if (headers[1].body && strcmp_nocase(headers[1].body, "inline"))
 		{
 			free(tmp);
@@ -562,7 +554,7 @@ char *get_alternative_message(FILE *fd, const char *boundary, const char *cte)
 			if (stop == 1 && c != '-')
 				stop = 0;
 			if (stop == 0 && c == '-')
-				stop - 1;
+				stop = 1;
 		}
 		if (stop == 1)
 			stop = 0;
