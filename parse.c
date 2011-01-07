@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <ctype.h>
 #include "error.h"
 
 int print_pdfs = 0, print_body = 1;
@@ -239,7 +240,7 @@ unsigned char *decode_base64(char *input, size_t *size)
 		size = &fake_size;
 	ret = malloc((strlen(input) / 4) * 3 + 1);
 	if (!ret)
-		ret = input;
+		ret = (unsigned char *)input;
 	cur_to = ret;
 	while (*input) {
 		char *c;
@@ -296,7 +297,7 @@ char *decode(char *input, const char *cte, size_t *size)
 	if (!strcmp_nocase(cte, "quoted-printable"))
 		return decode_quot(input, size);
 	if (!strcmp_nocase(cte, "base64"))
-		return decode_base64(input, size);
+		return (char *)decode_base64(input, size);
 	return input;
 }
 
@@ -641,7 +642,6 @@ char *parse_subject(char *input)
 		tok = strtok(NULL, "\t ");
 	}
 
-parse_to_end:
 	tok = malloc(strlen(ret) + 1);
 	if (!tok)
 		return orig;

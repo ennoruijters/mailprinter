@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "error.h"
 
 struct header {
 	char *name;
@@ -29,10 +30,12 @@ int print(struct header *hdrs, int nhdr, char *message)
 int print_binary(void *message, size_t size)
 {
 	FILE *p;
-	int i;
 	p = popen("lp -t attachment", "w");
-	if (!p)
+	if (!p) {
+		set_error("Error printing binary");
 		return -1;
+	}
 	fwrite(message, size, 1, p);
 	pclose(p);
+	return 0;
 }
